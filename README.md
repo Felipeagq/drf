@@ -70,3 +70,34 @@ urlpatterns = [
 ]
 
 ```
+
+## Serializadores
+Los serializadores nos permiten convertir un JSON en un objeto que pueda ser procesado por la base de datos y viceversa
+```python 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+        # exclude 
+```
+
+### Validaciones:
+Los serializadores tienen diferentes validadores, algunos vienen por defecto cuando se enlazan con el modelo, pero estos validadores se pueden rescribir.
+```python
+# Definición del serializador
+class TestUSerSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length = 200)
+    email = serializers.EmailField()
+
+    def validate_email(self,value):
+        # Custom validation
+        print(value)
+        if value == "":
+            # levantamiento de error en caso de validador
+            raise serializers.ValidationError("email no puede ir vacio")
+            # sí se cumple el validador, este error saldrá en la respuesta al JSON
+        
+        # podemos llamar otros validadores
+        if self.validate_name(self.context["name"]) in value:
+            raise serializers.ValidationError("El email no puede contener el nombre")
+```
