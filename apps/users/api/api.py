@@ -16,26 +16,14 @@ def user_api_view(request):
         user_serializer = UserSerializer(
             users,
             many = True
-        )
-        
-        test_data ={
-            "name":"prueba",
-            "email":"prueba@test.com"
-        }
-        test_user = TestUSerSerializer(
-            data=test_data,
-            context = test_data
-        )
-        print(test_user)
-        if test_user.is_valid():
-            print("El usuario es valido")
-        else:
-            print(test_user.errors)
-        
+        )        
         return Response(
             user_serializer.data,
             status= status.HTTP_200_OK
         )
+        
+        
+        
     # create
     elif request.method == 'POST':
         user_serializer = UserSerializer(
@@ -89,6 +77,7 @@ def user_detail_api_view(request,pk=None):
                 user_serializer.errors,
                 status= status.HTTP_400_BAD_REQUEST
             )
+            
         # delete
         elif request.method == "DELETE":
             user.delete()
