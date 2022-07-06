@@ -1,8 +1,12 @@
 # DJANGO REST FRAMEWORK
 
 ## Credenciales
-- felipegonzalezq
-- luna1503
+- Usuario 1:
+  - felipegonzalezq
+  - luna1503
+- Usuario 2:
+  - felipe2
+  - luna1503
 
 ## Configuration
 - Dentro del proyecto creamos una carpeta llamada ```settings.py```.
