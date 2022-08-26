@@ -8,6 +8,36 @@
   - felipe2
   - luna1503
 
+
+
+## Ambiente virutal y Settings
+```powershell
+# creamos entorno virtual
+python -m virtualenv venv
+
+# activamos el entorno virtual
+.\venv\Scripts\activate
+
+# instalamos django en el entorno
+pip install django
+
+# creamos el project
+django-admin startproject [projecto] .
+```
+
+## Primeros pasos
+```powershell
+# Registramos los cambios para las migraciones
+python manage.py makemigrations
+
+# realizamos las migraciones predeterminadas sqlite
+python manage.py migrate
+
+# Corremos el servidor
+python manage.py runserver
+```
+
+
 ## Configuration
 ### django-jazzmin
 - Install the latest pypi release with ````pip install -U django-jazzmin````
