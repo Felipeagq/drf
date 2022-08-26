@@ -72,7 +72,8 @@ python manage.py runserver
 INSTALLED_APPS = [
     'jazzmin',
     'django.contrib.admin',
-    [...]
+    [...],
+    'rest_framework'
 ]
 ```
 ### Django-jazzmin full example
