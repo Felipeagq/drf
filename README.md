@@ -59,6 +59,11 @@ python manage.py runserver
 - Luego nos dirigimos al archivo ```[projecto]/urls.py``` de nuestro proyecto principal e incluimos las rutas.
 - ![](./imagenes/registro_urls_de_app_en_proyecto.jpg)
 
+### Crear un superUsuario Admin:
+- ```python manage.py createsuperuser```.
+- Para gestionar modelos en el panel de administración, se deben agregar en el archivo de ```admin.py``` dentro de la app.
+- ![](./imagenes/registrar_modelos_en_panel_admin.jpg)
+
 ## Configuration
 ### django-jazzmin
 - Install the latest pypi release with ````pip install -U django-jazzmin````
