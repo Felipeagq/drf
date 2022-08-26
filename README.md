@@ -52,6 +52,12 @@ python manage.py runserver
 - Para aplicar las migraciones ```python manage.py migrate```.
 
 
+### Generar URLs desde una APP.
+- Entramos a la carpeta de nuestra APP.
+- Creamo un archivo llamado ```urls.py``` y agregamos las vistas.
+- ![](./imagenes/registro_views_en_urls_app.jpg)
+- Luego nos dirigimos al archivo ```[projecto]/urls.py``` de nuestro proyecto principal e incluimos las rutas.
+- ![](./imagenes/registro_urls_de_app_en_proyecto.jpg)
 
 ## Configuration
 ### django-jazzmin
