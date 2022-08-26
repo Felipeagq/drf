@@ -38,6 +38,21 @@ python manage.py runserver
 ```
 
 
+## Creamos una app.
+- A la altura de ```manage.py``` escribimos el comando ```python manage.py startapp [App]```.
+- Luego nos dirigimos a ```settings.py``` en INSTALLED_APPS agregamos nuestra app.
+- ![](./imagenes/app.jpg)
+- ![](./imagenes/app_in_settings.jpg)
+
+## Creación de un modelo.
+- Entramos al archivo ```models.py``` dentro de nuestra aplicación.
+- Creamos nuestros modelos extendiendo la clase ```models``` de ```django.db```.
+- ![](./imagenes/modelos.jpg)
+- Para hacer las migraciones debemos escribir el comando ```python manage.py makemigrations```.
+- Para aplicar las migraciones ```python manage.py migrate```.
+
+
+
 ## Configuration
 ### django-jazzmin
 - Install the latest pypi release with ````pip install -U django-jazzmin````
