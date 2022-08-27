@@ -1,14 +1,5 @@
 # DJANGO REST FRAMEWORK
 
-## Credenciales
-- Usuario 1:
-  - felipegonzalezq
-  - luna1503
-- Usuario 2:
-  - felipe2
-  - luna1503
-
-
 
 ## Ambiente virutal y Settings
 ```powershell
@@ -37,6 +28,23 @@ python manage.py migrate
 python manage.py runserver
 ```
 
+## Desplegar Django en docker
+### Dockerfile
+````dockerfile
+FROM python:3.8
+WORKDIR /app/socias
+COPY . .
+RUN pip install -r requirements.txt
+EXPOSE 8000
+CMD [ "python","manage.py","runserver","0.0.0.0:8000" ]
+````
+### modificar setting.py
+````python
+# settings.py
+...
+ALLOWED_HOSTS = ["x.x.x.x","dns.com"]
+...
+````
 
 ## Creamos una app.
 - A la altura de ```manage.py``` escribimos el comando ```python manage.py startapp [App]```.
