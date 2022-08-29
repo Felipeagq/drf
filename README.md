@@ -46,6 +46,27 @@ ALLOWED_HOSTS = ["x.x.x.x","dns.com"]
 ...
 ````
 
+### Database Configuration
+````python
+# [DATABASE]
+# 'django.db.backends.postgresql'
+# 'django.db.backends.mysql'
+# 'django.db.backends.sqlite3'
+# 'django.db.backends.oracle'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.[DATABASE]',
+        'NAME': 'mydatabase',
+        'USER': 'mydatabaseuser',
+        'PASSWORD': 'mypassword',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
+}
+````
+
+
 ## Creamos una app.
 - A la altura de ```manage.py``` escribimos el comando ```python manage.py startapp [App]```.
 - Luego nos dirigimos a ```settings.py``` en INSTALLED_APPS agregamos nuestra app.
