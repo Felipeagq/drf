@@ -49,8 +49,9 @@ ALLOWED_HOSTS = ["x.x.x.x","dns.com"]
 ### Database Configuration
 ````python
 # [DATABASE]
-# 'django.db.backends.postgresql'
-# 'django.db.backends.mysql'
+# 'django.db.backends.postgresql' (pip install psycopg2)
+# 'django.db.backends.mysql' (pip install mysql-connector-python)
+# https://dev.mysql.com/downloads/connector/python/
 # 'django.db.backends.sqlite3'
 # 'django.db.backends.oracle'
 
@@ -246,7 +247,8 @@ JAZZMIN_SETTINGS = {
     "language_chooser": True,
 }
 ```` 
-
+---
+---
 
 ### Project Settings
 - Dentro del proyecto creamos una carpeta llamada ```settings.py```.
@@ -362,7 +364,7 @@ class TestUSerSerializer(serializers.Serializer):
         return data
     
     # def create(self,validate_data):
-    #     return self.model.object.create(**validate_data)
+    #     return self.[model].object.create(**validate_data)
     
     # def update(self, instance, validated_data):
     #     instance.name = validated_data.get("name",instance.name)
@@ -397,6 +399,9 @@ class TestUSerSerializer(serializers.Serializer):
 
     # Función que valida la data en general
     def validate(self,data):
+        # puedo hacer valores
+        print(data["name"])
+        print(data["email"])
         ...
         return validate_data
 ```
@@ -438,7 +443,7 @@ class TestUSerSerializer(serializers.Serializer):
         # recorre la instancia asignandole el nuevo valor 
         # de validate_data
         # Esto por cada atributo de la instancia, definido en los fields
-        instance.field = validate_data.get("field",instance.field)
+        instance.[field] = validate_data.get("[field]",instance.[field])
         instance.save()
         return instance
 ```
@@ -466,6 +471,8 @@ class TestUSerSerializer(serializers.Serializer):
     def save(self):
         # podemos acceder a "validated_data"
         # ya que hace parte del mismo obejto
+        # podemos agregar funciones como:
+        # envio de correo, envio de celular mensajes
         print(self.validated_data)
 ```
 
@@ -474,17 +481,61 @@ class TestUSerSerializer(serializers.Serializer):
 ```python
 @api_view(["POST","GET","PU"])
 def testing_api_view(request,pk=None):
+    # hacemos get del objeto
+    # user = User.objects.filter(id=pk).first()
+
     if request.method == "GET":
         # solo se para el objeto
+        # user = User.objects.all()
         user = User.objects.filter(id=pk).first()
-        user_serializer = UserSerializer(user)
+        user_serializer = UserSerializer(
+            user,
+            many=True|False
+        )
     
     elif request.method == "POST":
         # se usa el "data ="
         user_serializer = UserSerializer(data=request.data)
+        if user_serializer.is_valid():
+            user_serializer.save()
+            return Response(...)
 
     elif request.method == "PUT":
+        user = User.objects.filter(id=pk).first()
         # Se pasa el modelo y el data
         user_serializer = UserSerializer(user, data=request.data)
+        if user_serializer.is_valid():
+            user_serializer.save()
+            return Response(...)
 
+    elif request.method == "DELETE":
+        # se
+        user = User.objects.filter(id=pk).first()
+        user.delete()
+        return Response(...)
 ```
+---
+---
+
+## MODELOS
+
+### Metodo .save()
+````python 
+class ...(models.Model):
+    ...
+
+    # podemos agregar logica al momento de guardar la instancia.
+    def save(self,*args,**kwargs):
+        ...
+````
+
+## To Representation
+Si tenemos un Serializado basado en un modelo
+````python 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+        # exclude 
+
+````
