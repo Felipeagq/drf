@@ -530,12 +530,29 @@ class ...(models.Model):
 ````
 
 ## To Representation
-Si tenemos un Serializado basado en un modelo
+Si tenemos un Serializado basado en un modelo, pero necesitamos que se actualicen todos los campos, pero no queremos devolver todos los campos, en el response, un buen metodo podría ser el de crear un serializador para crear, uno para actualizar y otro para listar.
+
+Pero si queremos una solución más compacta, seria el de reescribir el metodo de "to_representation" del serializador.
 ````python 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = '__all__' # para crear o actualizar (base de datos)
         # exclude 
 
+
+# función solo para listar (solo la representación)
+    def to_representation(self, instance):
+        # Tambien podemos reenombrar el key del diccionario a devolver
+        return {
+            "id":instance["id"],
+            "username":instance["id"],
+            "email": instance["email"],
+            "password":instance["password"]
+        }
 ````
+
+- Se puedes consultar todos los campos de la BBDD pero solo mostrar algunos, en el to_representation debe ser llamado como atributos
+![](./imagenes/to_representation_all.png)
+- Cuando se quiere traer solo unos cuantos valores de la BBDD, se coloca ````.values("","","","")```` al momento de hacer la consulta, pero el to_representation debe ser llamado como un diccionario.
+![](./imagenes/to_representation_values.png)
