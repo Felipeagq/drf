@@ -556,3 +556,6 @@ class UserSerializer(serializers.ModelSerializer):
 ![](./imagenes/to_representation_all.png)
 - Cuando se quiere traer solo unos cuantos valores de la BBDD, se coloca ````.values("","","","")```` al momento de hacer la consulta, pero el to_representation debe ser llamado como un diccionario.
 ![](./imagenes/to_representation_values.png)
+
+
+## ENCRIPTAR contraseña en un SERIALIZER
