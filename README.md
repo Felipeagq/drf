@@ -63,10 +63,22 @@ DATABASES = {
         'PASSWORD': 'mypassword',
         'HOST': '127.0.0.1',
         'PORT': '5432',
+    },
+    'database2': {
+        'ENGINE': 'django.db.backends.[DATABASE]',
+        'NAME': 'mydatabase',
+        'USER': 'mydatabaseuser',
+        'PASSWORD': 'mypassword',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 ````
-
+Para ejecutar comando sobre diferentes bases de datos, recordar que el ````manage.py makemigrations```` se hace en general, no por base de datos.
+```bash
+python manage.py migrate --database=default
+python manage.py migrate --database=database2
+```
 
 ## Creamos una app.
 - A la altura de ```manage.py``` escribimos el comando ```python manage.py startapp [App]```.
