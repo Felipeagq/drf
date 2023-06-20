@@ -612,6 +612,35 @@ def testing_api_view(request,pk=None):
         )   
     
 ```
+
+#### diferencia serializador GET, POST, PUT
+La diferencia entre los metodos GET PUT POST para los serializadores
+````py 
+    if request.method == "GET":
+        # solo se para el objeto
+        # user = User.objects.all()
+        user = User.objects.filter(id=pk).first()
+        # Solo se pasa la consulta
+        user_serializer = UserSerializer(user,many=True|False)
+                return Response(... )
+
+    elif request.method == "POST":
+        # se usa el "data ="
+        user_serializer = UserSerializer(data=request.data)
+        # Luego se guarda
+        if user_serializer.is_valid():
+            user_serializer.save()
+            return Response(...)
+
+    elif request.method == "PUT":
+        user = User.objects.filter(id=pk).first()
+        # Se pasa la consulta y la data
+        user_serializer = UserSerializer(user, data=request.data)
+        if user_serializer.is_valid():
+            user_serializer.save()
+            return Response(...)
+````
+
 ---
 
 ## MODELOS
