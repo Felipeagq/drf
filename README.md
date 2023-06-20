@@ -582,6 +582,10 @@ def testing_api_view(request,pk=None):
         if user_serializer.is_valid():
             user_serializer.save()
             return Response(...)
+        return Response(
+            user_serializer.errors,
+            status= status.HTTP_400_BAD_REQUEST
+        )   
 
     elif request.method == "PUT":
         user = User.objects.filter(id=pk).first()
