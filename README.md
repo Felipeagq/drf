@@ -268,6 +268,74 @@ JAZZMIN_SETTINGS = {
 - Separamos las configuraciones base de las configuraciones de ````local```` y ````production````, las cuales son : **DEBUG**, **ALLOWED_HOSTS**, **DATABASES**,**STATIC_URL**.
 - Luego entramos a ````wsgi.py```` y ````asgi.py```` y en la configuración colocamos en la que estemos trabajando ````os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings.local.py')````
 
+
+
+## Modelo de Usuario
+````py
+from django.db import models
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
+from simple_history.models import HistoricalRecords # se puede quitar
+
+
+class UserManager(BaseUserManager):
+    def _create_user(self, username, email, name,last_name, password, is_staff, is_superuser, **extra_fields):
+        user = self.model(
+            username = username,
+            email = email,
+            name = name,
+            last_name = last_name,
+            is_staff = is_staff,
+            is_superuser = is_superuser,
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save(using=self.db)
+        return user
+
+    def create_user(self, username, email, name,last_name, password=None, **extra_fields):
+        return self._create_user(username, email, name,last_name, password, False, False, **extra_fields)
+
+    def create_superuser(self, username, email, name,last_name, password=None, **extra_fields):
+        return self._create_user(username, email, name,last_name, password, True, True, **extra_fields)
+
+class User(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(max_length = 255, unique = True)
+    email = models.EmailField('Correo Electrónico',max_length = 255, unique = True,)
+    name = models.CharField('Nombres', max_length = 255, blank = True, null = True)
+    last_name = models.CharField('Apellidos', max_length = 255, blank = True, null = True)
+    image = models.ImageField('Imagen de perfil', upload_to='perfil/', max_length=255, null=True, blank = True)
+    is_active = models.BooleanField(default = True)
+    is_staff = models.BooleanField(default = False)
+    historical = HistoricalRecords() # se puede quitar
+    objects = UserManager()
+
+    class Meta:
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email','name','last_name']
+
+    def __str__(self):
+        return f'{self.name} {self.last_name}'
+````
+
+### Enlazar modelo de usarios
+Para enlazar modelo de usuarios con la aplicación admin, se debe colocar lo siguiente en el archivo de configuraciones.
+ ````py
+ # settings.py
+AUTH_USER_MODEL = 'users.User'
+````
+Y se coloca en admin de la aplicación
+
+````py
+from django.contrib import admin
+from .models import User
+
+# Register your models here.
+admin.site.register(User)
+````
+
 ## APIs
 ### APIViews
 ```python
@@ -336,11 +404,14 @@ urlpatterns = [
 ## Serializadores
 Los serializadores nos permiten convertir un JSON en un objeto que pueda ser procesado por la base de datos y viceversa
 ```python 
+from rest_framework import serializers
+from apps.users.models import User
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
-        # exclude 
+        # exclude = []
 
 
 class TestUSerSerializer(serializers.Serializer):
