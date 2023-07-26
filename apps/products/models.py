@@ -20,7 +20,6 @@ class CategoryProduct(BaseModel):
     """Model definition for CategoryProduct."""
     # TODO: Define fields here
     description = models.CharField(max_length=50)
-    measure_unit = models.ForeignKey(MeasureUnit, on_delete=models.CASCADE, null=False,verbose_name="Measure Unit")
     class Meta:
         """Meta definition for CategoryProduct."""
         verbose_name = 'CategoryProduct'
@@ -52,6 +51,8 @@ class Product(BaseModel):
     product = models.CharField("Product name", max_length=150, unique=True, blank=False, null=False)
     description = models.TextField("Product description",blank=False, null=False)
     image = models.ImageField("Product image", upload_to="products/", blank=True, null=True)
+    measure_unit = models.ForeignKey(MeasureUnit, on_delete=models.CASCADE, null=True,verbose_name="Measure Unit")
+    category_product = models.ForeignKey(CategoryProduct, on_delete=models.CASCADE, null=True,verbose_name="Category Product")
     class Meta:
         """Meta definition for Product."""
         verbose_name = 'Product'
