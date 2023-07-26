@@ -17,7 +17,6 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self.db)
         return user
-
     def create_user(self, username, email, name,last_name, password=None, **extra_fields):
         return self._create_user(username, email, name,last_name, password, False, False, **extra_fields)
 
@@ -44,3 +43,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f'{self.name} {self.last_name}'
+    
+    # def save(self, *args, **kwargs):
+        # funciones

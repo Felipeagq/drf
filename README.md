@@ -1,5 +1,7 @@
 # DJANGO REST FRAMEWORK
 
+sharid
+sha0503
 
 ## Ambiente virutal y Settings
 ```powershell
@@ -502,7 +504,9 @@ class TestUSerSerializer(serializers.Serializer):
 
     # "self.model" debe ser un modelo creado
     def create(self,validate_data):
-        return self.model.objects.create(**validate_data)
+        # se tiene que pasar el modelo para guardar
+        #return self.model.objects.create(**validate_data)
+        return User.model.objects.create(**validate_data)
 ```
 
 
@@ -578,7 +582,8 @@ def testing_api_view(request,pk=None):
     
     elif request.method == "POST":
         # se usa el "data ="
-        user_serializer = UserSerializer(data=request.data)
+        user_serializer = UserSerializer(data=request.data,
+        context=request.data)
         if user_serializer.is_valid():
             user_serializer.save()
             return Response(...)
@@ -685,3 +690,26 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 ## ENCRIPTAR contraseña en un SERIALIZER
+Para encriptar la constraseña se debe modificar el metodo save y update del serializer para que este al momento de llamar el metodo .save() del modelo, este pase la constraseña ya encriptada.
+
+````python
+from rest_framework import serializers
+from apps.users.models import User
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+    
+    def create(self, validated_data):
+        user = User(**validated_data)
+        user.set_password(validated_data["password"])
+        user.save()
+        return user
+    
+    def update(self,instance,validated_data):
+        updated_user = super().update(instance, validated_data)
+        updated_user.set_password(validated_data["password"])
+        updated_user.save()
+        return updated_user
+````
