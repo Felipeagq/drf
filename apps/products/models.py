@@ -31,7 +31,7 @@ class CategoryProduct(BaseModel):
 
 
 
-class Indicator(models.Model):
+class Indicator(BaseModel):
     """Model definition for Indicator."""
     # TODO: Define fields here
     category_product = models.ForeignKey(CategoryProduct, on_delete=models.CASCADE, null=False,verbose_name="Category Products")

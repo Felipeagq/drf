@@ -713,3 +713,28 @@ class UserSerializer(serializers.ModelSerializer):
         updated_user.save()
         return updated_user
 ````
+
+
+## Vistas genericas
+
+
+### ListAPIView
+````python
+from rest_framework import generics
+
+class MeasureUnitList(generics.ListAPIView):
+    serializer_class = MeasureUnitSerializer # Serializador
+    
+    def get_queryset(self):
+        return MeasureUnit.objects.filter(state = True) # Modelo
+````
+
+Para mostrarlo como url
+````python
+from django.urls import path
+from apps.products.api.views.general_view import MeasureUnitListAPIView
+
+urlpatterns = [
+    path("maesure_unit/", MeasureUnitListAPIView.as_view(), name="measure_unit")   
+]
+````

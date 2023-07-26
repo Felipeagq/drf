@@ -20,5 +20,6 @@ from .hello_check import hello_check_api_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('usuario/',include('apps.users.api.urls')),
-    path("",hello_check_api_view)
+    path("",hello_check_api_view),
+    path("products/",include("apps.products.api.urls"))
 ]
