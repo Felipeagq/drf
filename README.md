@@ -1,7 +1,11 @@
 # DJANGO REST FRAMEWORK
 
-sharid
-sha0503
+## Credenciales
+- sharid
+- sha0503
+
+## Documentación
+https://www.cdrf.co
 
 ## Ambiente virutal y Settings
 ```powershell
@@ -719,6 +723,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 ### ListAPIView
+La forma general de como se define la vista de la clase ListAPIView, es la siguiente:
+- Se define el *````````serializer_class````````
+- se sobre escrible la función ````get_queryset ````
 ````python
 from rest_framework import generics
 
@@ -728,6 +735,26 @@ class MeasureUnitList(generics.ListAPIView):
     def get_queryset(self):
         return MeasureUnit.objects.filter(state = True) # Modelo
 ````
+---
+Este proceso se puede abstraer, creando una clase general, la cual se puede llamar cada vez que se va hacer una ListAPIView
+```python
+from rest_framework import generics
+
+class GeneralListAPIView(generics.ListAPIView):
+    serializer_class = None # se coloca como None, pero se sobre-escribirá
+    
+    def get_queryset(self):
+        model = self.get_serializer().Meta.model # obtenemos el modelo del serializador
+        return model.objects.filter(state = True)
+```
+
+Ahora podemos llamar esa clase y solo pasarle el serializador 
+```py
+from apps.base.api import GeneralListAPIView
+
+class MeasureUnitListAPIView(GeneralListAPIView):
+    serializer_class = MeasureUnitSerializer # Serializador
+```
 
 Para mostrarlo como url
 ````python
