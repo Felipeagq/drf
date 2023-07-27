@@ -59,4 +59,4 @@ class Product(BaseModel):
         verbose_name_plural = 'Products'
     def __str__(self):
         """Unicode representation of Product."""
-        pass
+        return self.product

@@ -112,6 +112,19 @@ python manage.py migrate --database=database2
 - Para gestionar modelos en el panel de administración, se deben agregar en el archivo de ```admin.py``` dentro de la app.
 - ![](./imagenes/registrar_modelos_en_panel_admin.jpg)
 
+### Modificar vista del modelo en admin
+Se crea una clase y en el ``list_display`` como tupla se pasan los varlores que se quieren mostrar
+```py
+class AdminView(admin.ModelAdmin):
+    list_display = ("id","description")
+
+admin.site.register(MeasureUnit,AdminView)
+admin.site.register(CategoryProduct,AdminView)
+admin.site.register(Indicator)
+admin.site.register(Product)
+```
+![](./imagenes/modificar_admin_view.png)
+
 ## Configuration
 ### django-jazzmin
 - Install the latest pypi release with ````pip install -U django-jazzmin````
@@ -692,6 +705,55 @@ class UserSerializer(serializers.ModelSerializer):
 - Cuando se quiere traer solo unos cuantos valores de la BBDD, se coloca ````.values("","","","")```` al momento de hacer la consulta, pero el to_representation debe ser llamado como un diccionario.
 ![](./imagenes/to_representation_values.png)
 
+## Serializador de Relaciones 
+Para serializar las llaves foraneas y que no se vean los Ids, puedes ser 3 metodos.
+
+***Los campos deben llamarse iguales de como estan en el modelo.***
+
+### Metodo 1 
+```py
+class ProductSerializer(serializers.ModelSerializer):
+    # se sobre escribe el campo del serializador y se muestra todo el serializador
+    measure_unit = MeasureUnitSerializer()
+    category_product = CategoryProductSerializer()
+    
+    class Meta:
+        model = Product
+        exclude = ("state",)
+```
+
+### Metodo 2
+```py
+class ProductSerializer(serializers.ModelSerializer):
+    # Se sobre escribe el campo del serializador mostrando lo que está en el __str__
+    # No funciona en la interfaz
+    measure_unit = serializers.StringRelatedField()
+    category_product = serializers.StringRelatedField()
+    
+    class Meta:
+        model = Product
+        exclude = ("state",)
+```
+
+### Metodo 3
+```py
+class ProductSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Product
+        exclude = ("state",)
+    
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "description":instance.description,
+            # modificando el metodo to_representation y entran al atributo
+            # del campo de la llave foranea
+            "measure_unit": instance.measure_unit.description,
+            "category_product":instance.category_product.description
+        }
+```
+
 
 ## ENCRIPTAR contraseña en un SERIALIZER
 Para encriptar la constraseña se debe modificar el metodo save y update del serializer para que este al momento de llamar el metodo .save() del modelo, este pase la constraseña ya encriptada.
@@ -722,7 +784,7 @@ class UserSerializer(serializers.ModelSerializer):
 ## Vistas genericas
 
 
-### ListAPIView
+### ListAPIView (GET)
 La forma general de como se define la vista de la clase ListAPIView, es la siguiente:
 - Se define el *````````serializer_class````````
 - se sobre escrible la función ````get_queryset ````
@@ -765,3 +827,9 @@ urlpatterns = [
     path("maesure_unit/", MeasureUnitListAPIView.as_view(), name="measure_unit")   
 ]
 ````
+
+### CreateAPIView
+```py
+class ProductCreateAPIView(generics.CreateAPIView):
+    serializer_class = ProductSerializer
+```
