@@ -784,7 +784,7 @@ class UserSerializer(serializers.ModelSerializer):
 ## Vistas genericas
 
 
-### ListAPIView (GET)
+### ListAPIView (GET-List)
 La forma general de como se define la vista de la clase ListAPIView, es la siguiente:
 - Se define el *````````serializer_class````````
 - se sobre escrible la función ````get_queryset ````
@@ -828,8 +828,56 @@ urlpatterns = [
 ]
 ````
 
-### CreateAPIView
+### CreateAPIView (POST)
 ```py
 class ProductCreateAPIView(generics.CreateAPIView):
     serializer_class = ProductSerializer
+
+# se puede sobre-escribir el metodo POST
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "message":"Producto creado correctamente",
+                "data":request.data
+                }
+            )
+        return Response(serializer.errors)
+```
+
+### RetrieveAPIView (GET) get by id
+```py
+class ProductRetrieveAPIView(generics.RetrieveAPIView):
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        return self.get_serializer().Meta.model.objects.filter(state = True)
+```
+Se debe colocar la ruta de la siguiente forma
+```py
+# Busca por pk
+path("products/retrieve/<int:pk>",ProductRetrieveAPIView.as_view(), name="product_retrieve")
+```
+
+
+### DestroyAPIView
+```py
+class ProductDestroyAPIView(generics.DestroyAPIView):
+    serializer_class = ProductSerializer
+    def get_queryset(self):
+        return self.get_serializer().Meta.model.objects.filter(state = True)
+
+    def delete(self,request,pk=None):
+        product = self.get_queryset().filter(id = pk).first()
+        if product:
+            product.state = False
+            product.save()
+            return Response({"message":"Producto eliminado correctamente","data":product.product})
+        return Response({"message":"Producto no encontrado"})
+```
+Se debe colocar la ruta de la siguiente forma
+```py
+# Busca por pk
+path("products/destroy/<int:pk>",ProductDestroyAPIView.as_view(), name="product_destroy"),
 ```
