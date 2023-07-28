@@ -881,3 +881,20 @@ Se debe colocar la ruta de la siguiente forma
 # Busca por pk
 path("products/destroy/<int:pk>",ProductDestroyAPIView.as_view(), name="product_destroy"),
 ```
+
+### UpdateAPIView (PUT,PATCH)
+```py
+class ProductUpdateAPIView(generics.UpdateAPIView):
+    serializer_class = ProductSerializer
+    
+    def get_queryset(self):
+        return self.get_serializer().Meta.model.objects.filter(state = True)
+    
+    # Se puede sobre escribir el patch
+    def patch(self, request, pk=None):
+        product = self.get_queryset().filter(id = pk).first()
+        if product:
+            product_serializer = self.serializer_class(product)
+            return Response(product_serializer.data, status="200")
+        return Response({"message":"Producto no encontrado"})
+```

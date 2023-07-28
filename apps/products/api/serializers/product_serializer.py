@@ -13,6 +13,7 @@ class ProductSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return {
             "id": instance.id,
+            "product":instance.product,
             "description":instance.description,
             # "image":instance.image,
             "measure_unit": instance.measure_unit.description,
