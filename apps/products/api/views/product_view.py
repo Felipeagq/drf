@@ -58,3 +58,16 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
             product_serializer = self.serializer_class(product)
             return Response(product_serializer.data, status="200")
         return Response({"message":"Producto no encontrado"})
+
+
+
+class ProductListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = ProductSerializer
+    queryset = ProductSerializer.Meta.model.objects.all()
+
+
+
+class ProductRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
+    serializer_class = ProductSerializer
+    queryset = ProductSerializer.Meta.model.objects.all()
+    
