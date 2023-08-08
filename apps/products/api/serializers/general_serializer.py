@@ -17,3 +17,4 @@ class IndicatorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Indicator
         exclude = ("state",)
+

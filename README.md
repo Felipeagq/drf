@@ -915,3 +915,66 @@ class ProductRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = ProductSerializer
     queryset = ProductSerializer.Meta.model.objects.all()
 ```
+
+
+### RetrieveUpdateDestroyAPIView (GET,PUT,DELETE)
+```py
+class ProductRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ProductSerializer
+    
+    def get_queryset(self,pk=None):
+        if pk is None:
+            return self.get_serializer().Meta.model.objects.filter(state=True)
+        else:
+            return self.get_serializer().Meta.model.objects.filter(id = pk, state = True).first()
+```
+
+## ViewSets
+The actions provided by the ModelViewSet class are .list(), .retrieve(), .create(), .update(), .partial_update(), and .destroy().
+```py
+from rest_framework import viewsets
+
+class ProductViewSet(viewsets.ModelViewSet):
+    serializer_class = ProductSerializer
+    queryset = ProductSerializer.Meta.model.objects.filter(state = True)
+
+    def list(self, request):
+        pass
+
+    def create(self, request):
+        pass
+
+    def retrieve(self, request, pk=None):
+        pass
+
+    def update(self, request, pk=None):
+        pass
+
+    def partial_update(self, request, pk=None):
+        pass
+
+    def destroy(self, request, pk=None):
+        pass
+```
+creamos un archivo llamado routers.py
+```py
+from rest_framework.routers import DefaultRouter
+from apps.products.api.views.product_view import ProductViewSet
+
+router = DefaultRouter()
+router.register(r"products",ProductViewSet,basename="products")
+
+urlpatterns = router.urls
+```
+y luego en el archivo de urls.py PRINCIPAL, agregar el router
+```py
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('usuario/',include('apps.users.api.urls')),
+    path("",hello_check_api_view),
+
+    # Se agregar el archivo routers
+    path("products/",include("apps.products.api.routers"))
+]
+
+```

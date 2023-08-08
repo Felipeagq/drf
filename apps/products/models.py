@@ -44,7 +44,7 @@ class Indicator(BaseModel):
         return f"Oferta de la categoria {self.category_product} es de {self.discount_value}"
 
 
-
+ 
 class Product(BaseModel):
     """Model definition for Product."""
     # TODO: Define fields here

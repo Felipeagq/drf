@@ -13,3 +13,4 @@ class IndicatorListAPIView(GeneralListAPIView):
 
 class CategoryProductListAPIView(GeneralListAPIView):
     serializer_class = CategoryProductSerializer
+
