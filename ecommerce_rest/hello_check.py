@@ -6,5 +6,5 @@ from rest_framework.response import Response
 def hello_check_api_view(request):
     if request.method == "GET":
         return Response(
-            "Server Running"
+            {"msg":"Server Running"}
         )

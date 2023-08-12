@@ -929,8 +929,11 @@ class ProductRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
             return self.get_serializer().Meta.model.objects.filter(id = pk, state = True).first()
 ```
 
-## ViewSets
+## ViewSets y Routes
 The actions provided by the ModelViewSet class are .list(), .retrieve(), .create(), .update(), .partial_update(), and .destroy().
+
+- Estos metodos se puedes sobre escribir
+- Siempre deben tener un ````queryset````
 ```py
 from rest_framework import viewsets
 
@@ -956,7 +959,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     def destroy(self, request, pk=None):
         pass
 ```
-creamos un archivo llamado routers.py
+creamos un archivo llamado ``routers.py``
 ```py
 from rest_framework.routers import DefaultRouter
 from apps.products.api.views.product_view import ProductViewSet
@@ -977,4 +980,55 @@ urlpatterns = [
     path("products/",include("apps.products.api.routers"))
 ]
 
+```
+
+
+## Swagger
+### instalación
+```pip install drf-yasg```
+
+Solo toma los ````viewset.ModelViewSet```` y ```GenericViewSet``` para mostrar en la documentación.
+- https://drf-yasg.readthedocs.io/en/stable/openapi.html#default-behavior
+- El ejemplo que muestra en el swagger lo toma de la clase Meta del serializador.
+- Se puede configurar como lo muestra la documentación https://drf-yasg.readthedocs.io/en/stable/settings.html
+
+### in settings.py
+```py
+INSTALLED_APPS = [
+   ...
+   'django.contrib.staticfiles',  # required for serving swagger ui's css/js files
+   'drf_yasg',
+   ...
+] 
+```
+
+### in urls.py
+```py
+...
+from django.urls import re_path
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+...
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Snippets API",
+      default_version='v1',
+      description="Test description",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="contact@snippets.local"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
+
+urlpatterns = [
+   path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+   path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+   path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+   ...
+]
 ```

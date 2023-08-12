@@ -10,6 +10,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = ProductSerializer.Meta.model.objects.filter(state = True)
     
     def create(self,request):
+        """
+        Se crea un producto en la base de datos,este es un comentario general
+        
+        Este es un comentario especifico
+        Otro comentario
+        """
         print("Hola desde POST")
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
