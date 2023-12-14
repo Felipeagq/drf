@@ -1049,3 +1049,73 @@ INSTALLED_APPS = [
 python manage.py makemigrations
 python manage.py migrate
 ```
+
+### Realizamos las views
+```py
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+from apps.users.serializers import UserTokenSerializer
+
+
+
+class Login(ObtainAuthToken):
+    
+    def post(self,request,*args,**kwargs):
+        login_serializer = self.serializer_class(
+            data=request.data,
+            context={"request":request}
+        )
+        # Se valida el json 
+        if login_serializer.is_valid():
+            user = login_serializer.validated_data["user"]
+            print(user.is_active)
+            # Se valida que el usuario este activo
+            if not user.is_active:
+                return Response({
+                    "msg":"user no active",
+                    "data":{
+                        "error":"El usuario no esta activo"
+                    }
+                })
+            # si el usuario esta activo
+            if user.is_active:
+                # se crea el token 
+                token,created = Token.objects.get_or_create(user = user)
+                # se serializa el usuario 
+                user_serializer = UserTokenSerializer(user)
+                if created:
+                    return Response({
+                        "msg":"successfull login",
+                        "data":{
+                            "token":token.key,
+                            "user": user_serializer.data,
+                        },
+                    })
+                else:
+                    # si se inicia sesión nuevamente, se elimina el token
+                    token.delete()
+                    print("Se elimino token")
+                    # se crea nuevamente
+                    token = Token.objects.create(user=user)
+                    return Response({
+                        "msg":"Su sesión se ha cerrado",
+                        "data":{
+                            "msg":"Se ha iniciado sesión desde otro dispositivo, token eliminado",
+                            "data":{
+                            "token":token.key,
+                            "user": user_serializer.data,
+                        },
+                        }
+                    })
+        else:
+            return Response({
+                "msg":"worng credentials",
+                "data":{
+                    "error":"La información suministrada es incorrecta"
+                }
+            })
+        return Response({
+            "msg":"successfull"
+        })
+```
