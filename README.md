@@ -1032,3 +1032,20 @@ urlpatterns = [
    ...
 ]
 ```
+
+
+## Login con Token + Sesiones
+### Agregar libreria en settings
+```py
+INSTALLED_APPS = [
+    ...
+    "rest_framework",
+    "rest_framework.authtoken",
+    ...
+]
+```
+### Realizar migraciones
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
