@@ -1052,11 +1052,13 @@ python manage.py migrate
 
 ### Realizamos las views
 ```py
+from django.contrib.sessions.models import Session
+from datetime import datetime
+
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from apps.users.serializers import UserTokenSerializer
-
 
 
 class Login(ObtainAuthToken):
@@ -1093,6 +1095,16 @@ class Login(ObtainAuthToken):
                         },
                     })
                 else:
+                    # se obtienen todas las sesiones
+                    all_sessions = Session.objects.filter(expire_date__gte = datetime.now())
+                    # se itera cada sesión
+                    if all_sessions.exists():
+                        for session in all_sessions:
+                            session_data = session.get_decoded()
+                            # si alguna de ellas coincide con el usuario que se está logeando
+                            if user.id == int(session_data.get("_auth_user_id")):
+                                # Se le cierra la sesión
+                                session.delete()
                     # si se inicia sesión nuevamente, se elimina el token
                     token.delete()
                     print("Se elimino token")
