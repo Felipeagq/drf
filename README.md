@@ -1050,7 +1050,7 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-### Realizamos las views
+### Realizamos las views del LogIn
 ```py
 from django.contrib.sessions.models import Session
 from datetime import datetime
@@ -1130,4 +1130,53 @@ class Login(ObtainAuthToken):
         return Response({
             "msg":"successfull"
         })
+```
+
+## LogOut
+Se debe enviar el token por query params, se puede hacer por POST tambien.
+```py
+class Logout(APIView):
+    
+    def get(self,request,*args,**kwargs):
+        token = request.GET.get("token")
+        try:
+            token = Token.objects.filter(key=token).first()
+            if token:
+                user = token.user
+                
+                # se obtienen todas las sesiones
+                all_sessions = Session.objects.filter(expire_date__gte = datetime.now())
+                # se itera cada sesión
+                if all_sessions.exists():
+                    for session in all_sessions:
+                        session_data = session.get_decoded()
+                        # si alguna de ellas coincide con el usuario que se está logeando
+                        if user.id == int(session_data.get("_auth_user_id")):
+                            # Se le cierra la sesión
+                            session.delete()
+                            
+                token.delete()
+                session_message = "Sesiones de usuario eliminadas"
+                token_message = "Token Eliminado"
+                return Response({
+                    "msg":"Sesión expirado",
+                    "data":{
+                        "Token":token_message,
+                        "session":session_message
+                    }
+                })
+            else:
+                return Response({
+                    "msg":"Token no encontrado",
+                    "data":{
+                        "error":"no se ha encontrado un usuario con esas credenciales"
+                    }
+                })
+        except Exception as e:
+            return Response({
+                "msg":"atributo token no encontrado",
+                "data":{
+                    "error":"No se ha encontrado el atributo token en la petición"
+                }
+            })
 ```
