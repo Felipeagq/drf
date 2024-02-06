@@ -17,6 +17,7 @@ python -m virtualenv venv
 
 # instalamos django en el entorno
 pip install django
+pip install djangorestframework
 
 # creamos el project
 django-admin startproject [projecto] .
