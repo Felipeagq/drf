@@ -1051,6 +1051,7 @@ python manage.py migrate
 ```
 
 ### Realizamos las views del LogIn
+Nos vamos a nuestro modulo de user y creamos un archivo llamado ``viewsLogin.py``
 ```py
 from django.contrib.sessions.models import Session
 from datetime import datetime
